@@ -1,9 +1,9 @@
 "use client";
 import HeroGraphic from "@/components/HeroGraphic";
 import { useAuthenticatedContext } from "@/contexts/AuthenticatedContext";
-import styles from "./LobbyPage.module.scss";
+import styles from "./Lobby.module.scss";
 
-export default function LobbyPage() {
+export default function Lobby() {
   const { channelName } = useAuthenticatedContext();
   return (
     <main className={styles.main}>

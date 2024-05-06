@@ -26,10 +26,10 @@ const AuthenticatedContext = createContext({
   channelName: "",
 });
 
-export function AuthenticatedContextProvider({ env, children }) {
-  const authenticatedContext = useAuthenticatedContextSetup(env);
+export function AuthenticatedContextProvider({ clientId, children }) {
+  const authenticatedContext = useAuthenticatedContextSetup(clientId);
   if (authenticatedContext == null) {
-    return <>loading</>;
+    return <>loading</>; // TODO: Create loading screen
   }
   return (
     <AuthenticatedContext.Provider value={authenticatedContext}>
@@ -42,18 +42,18 @@ export function useAuthenticatedContext() {
   return useContext(AuthenticatedContext);
 }
 
-function useAuthenticatedContextSetup(env) {
+function useAuthenticatedContextSetup(clientId) {
   const [auth, setAuth] = useState(null);
 
   useEffect(() => {
     async function setupDiscordSdk() {
-      const discordSdk = initDiscordSdk(env);
+      const discordSdk = initDiscordSdk(clientId);
       await discordSdk.ready();
       console.log("Discord SDK is ready");
 
       // Authorize with Discord Client
       const { code } = await discordSdk.commands.authorize({
-        client_id: env.DISCORD_CLIENT_ID,
+        client_id: clientId,
         response_type: "code",
         state: "",
         prompt: "none",

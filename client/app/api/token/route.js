@@ -15,7 +15,7 @@ export async function POST(request) {
       code,
     }),
   });
-
   const { access_token } = await response.json();
+
   return Response.json({ access_token });
 }

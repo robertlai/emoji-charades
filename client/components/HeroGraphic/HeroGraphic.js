@@ -9,6 +9,7 @@ export default function HeroGraphic() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      // TODO: Prevent same emoji appearing consecutively
       setEmoji(emojis[Math.floor(Math.random() * emojis.length)]);
     }, 1000);
     return () => clearInterval(interval);
