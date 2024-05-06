@@ -1,7 +1,14 @@
 "use client";
-import { initDiscordSdk } from "@/utils/discordSdk";
-import { createContext, useContext, useEffect, useState } from "react";
+// import { Client } from "colyseus.js";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import Loading from "@/components/Loading";
+import { initDiscordSdk } from "@/utils/discordSdk";
+import {
+  getGuildMember,
+  getUserAvatarUrl,
+  getUserDisplayName,
+} from "@/utils/user";
+import { io } from "socket.io-client";
 
 const AuthenticatedContext = createContext({
   user: {
@@ -46,8 +53,11 @@ export function useAuthenticatedContext() {
 
 function useAuthenticatedContextSetup(clientId) {
   const [auth, setAuth] = useState(null);
+  const started = useRef(false);
 
   useEffect(() => {
+    if (started.current) return;
+
     async function setupDiscordSdk() {
       const discordSdk = initDiscordSdk(clientId);
       await discordSdk.ready();
@@ -72,21 +82,19 @@ function useAuthenticatedContextSetup(clientId) {
           code,
         }),
       });
-      const { access_token } = await response.json();
 
-      console.log(access_token);
+      const accessToken = (await response.json()).access_token;
 
       // Authenticate with Discord client (using the access_token)
       let newAuth = await discordSdk.commands.authenticate({
-        access_token,
+        access_token: accessToken,
       });
 
       if (newAuth == null) {
         throw new Error("Authenticate command failed");
       }
 
-      let channelName = "Unknown";
-
+      let roomName = "Channel";
       // Requesting the channel in GDMs (when the guild ID is null) requires
       // the dm_channels.read scope which requires Discord approval.
       if (discordSdk.channelId != null && discordSdk.guildId != null) {
@@ -95,29 +103,29 @@ function useAuthenticatedContextSetup(clientId) {
           channel_id: discordSdk.channelId,
         });
         if (channel.name != null) {
-          channelName = channel.name;
+          roomName = channel.name;
         }
       }
 
-      // 1. From the HTTP API fetch a list of all of the user's guilds
-      const guilds = await fetch(
-        `https://discord.com/api/v10/users/@me/guilds`,
-        {
-          headers: {
-            // NOTE: we're using the access_token provided by the "authenticate" command
-            Authorization: `Bearer ${access_token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      ).then((response) => response.json());
+      const guildMember = await getGuildMember({
+        guildId: discordSdk.guildId,
+        accessToken,
+      });
+      const avatarUri = getUserAvatarUrl({ guildMember, user: newAuth.user });
+      const name = getUserDisplayName({ guildMember, user: newAuth.user });
 
-      // 2. Find the current guild's info, including it's "icon"
-      const currentGuild = guilds.find((g) => g.id === discordSdk.guildId);
-      const guildImg = `https://cdn.discordapp.com/icons/${currentGuild.id}/${currentGuild.icon}.webp?size=128`;
+      const socket = io();
+      socket.on("connect", () => {
+        console.log("connected");
+      });
 
-      setAuth({ ...newAuth, channelName, guildImg });
+      setAuth({
+        ...newAuth,
+        guildMember,
+      });
     }
 
+    started.current = true;
     setupDiscordSdk().then(() => {
       console.log("Discord SDK is authenticated");
 
