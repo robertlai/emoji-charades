@@ -1,0 +1,27 @@
+.container {
+  width: 240px;
+  height: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    font-size: 128px;
+  }
+
+  .border {
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    border: 16px dashed #55ccff;
+    border-radius: 120px;
+    animation: spin 10s linear infinite;
+
+    @keyframes spin {
+      100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+  }
+}

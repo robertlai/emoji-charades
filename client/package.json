@@ -1,0 +1,24 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@discord/embedded-app-sdk": "^1.2.0",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "sass": "^1.76.0",
+    "twemoji": "^14.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3"
+  },
+  "packageManager": "yarn@4.2.1"
+}
