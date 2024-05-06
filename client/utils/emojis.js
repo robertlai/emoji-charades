@@ -1,6 +1,4 @@
-import twemoji from "twemoji";
-
-const emojiCodePoints = [
+export const emojiCodePoints = [
   "1f004",
   "1f0cf",
   "1f170",
@@ -876,7 +874,3 @@ const emojiCodePoints = [
   "ae",
   "e50a",
 ];
-
-export default emojiCodePoints.map((codePoint) =>
-  twemoji.convert.fromCodePoint(codePoint)
-);

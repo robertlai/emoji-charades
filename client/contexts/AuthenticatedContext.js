@@ -1,6 +1,7 @@
 "use client";
 import { initDiscordSdk } from "@/utils/discordSdk";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 
 const AuthenticatedContext = createContext({
   user: {
@@ -24,12 +25,13 @@ const AuthenticatedContext = createContext({
   client: undefined,
   room: undefined,
   channelName: "",
+  guildImg: "",
 });
 
 export function AuthenticatedContextProvider({ clientId, children }) {
   const authenticatedContext = useAuthenticatedContextSetup(clientId);
   if (authenticatedContext == null) {
-    return <>loading</>; // TODO: Create loading screen
+    return <Loading />;
   }
   return (
     <AuthenticatedContext.Provider value={authenticatedContext}>
@@ -72,6 +74,8 @@ function useAuthenticatedContextSetup(clientId) {
       });
       const { access_token } = await response.json();
 
+      console.log(access_token);
+
       // Authenticate with Discord client (using the access_token)
       let newAuth = await discordSdk.commands.authenticate({
         access_token,
@@ -95,7 +99,23 @@ function useAuthenticatedContextSetup(clientId) {
         }
       }
 
-      setAuth({ ...newAuth, channelName });
+      // 1. From the HTTP API fetch a list of all of the user's guilds
+      const guilds = await fetch(
+        `https://discord.com/api/v10/users/@me/guilds`,
+        {
+          headers: {
+            // NOTE: we're using the access_token provided by the "authenticate" command
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      ).then((response) => response.json());
+
+      // 2. Find the current guild's info, including it's "icon"
+      const currentGuild = guilds.find((g) => g.id === discordSdk.guildId);
+      const guildImg = `https://cdn.discordapp.com/icons/${currentGuild.id}/${currentGuild.icon}.webp?size=128`;
+
+      setAuth({ ...newAuth, channelName, guildImg });
     }
 
     setupDiscordSdk().then(() => {
