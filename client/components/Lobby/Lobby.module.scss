@@ -4,7 +4,7 @@
   .hero {
     height: 60vh;
     display: flex;
-    gap: 4vh;
+    gap: 2vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -13,6 +13,29 @@
   h1 {
     font-size: 8vh;
     color: darken(#55ccff, 30%);
+  }
+
+  button {
+    min-width: 16vw;
+    padding: 1.5vh;
+    font-size: 3vh;
+    color: white;
+    background-color: darken(#55ccff, 30%);
+    border: none;
+    border-radius: 1vh;
+    transition: all 0.2s;
+
+    &:hover,
+    &:focus {
+      outline: none;
+      background-color: #55ccff;
+      box-shadow: 0.5vh 0.5vh 0 darken(#55ccff, 30%);
+    }
+
+    &.disabled {
+      pointer-events: none;
+      background-color: #ccc;
+    }
   }
 
   .players {
