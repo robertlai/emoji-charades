@@ -15,6 +15,12 @@ function createRoom(roomId) {
   };
 }
 
+function startTurn(roomId) {
+  globalState.rooms[roomId].currentWord = getWord();
+  globalState.rooms[roomId].hint = [];
+  globalState.rooms[roomId].playersGuessed = [];
+}
+
 export function addUserToRoom(user, roomId) {
   // Create room if it doesn't exist
   if (!globalState.rooms[roomId]) createRoom(roomId);
@@ -56,9 +62,7 @@ export function startGame(roomId) {
   globalState.rooms[roomId].flow = "playing";
   // TODO: Fix case of user leaving during game
   globalState.rooms[roomId].turn = 0;
-  globalState.rooms[roomId].currentWord = getWord();
-  globalState.rooms[roomId].hint = [];
-  globalState.rooms[roomId].playersGuessed = [];
+  startTurn(roomId);
 }
 
 export function appendHint(roomId, emoji) {
@@ -90,9 +94,7 @@ export function checkGuess(roomId, userId, guess) {
       globalState.rooms[roomId].players.length - 2
     ) {
       globalState.rooms[roomId].turn += 1;
-      globalState.rooms[roomId].currentWord = getWord();
-      globalState.rooms[roomId].hint = [];
-      globalState.rooms[roomId].playersGuessed = [];
+      startTurn(roomId);
     }
     if (
       globalState.rooms[roomId].turn >= globalState.rooms[roomId].players.length
