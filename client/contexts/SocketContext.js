@@ -1,5 +1,6 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 import { socket } from "@/utils/socket";
 
 const SocketContext = createContext();
@@ -27,10 +28,11 @@ export function SocketContextProvider({ children }) {
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off("updateGameState", onUpdateGameState);
     };
   }, []);
 
-  if (!connected) return <>not connected</>;
+  if (!connected) return <Loading message="Connecting to server..." />;
 
   return (
     <SocketContext.Provider value={{ gameState }}>

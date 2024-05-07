@@ -1,5 +1,7 @@
+const CDN = `https://cdn.discordapp.com`;
+const SIZE = 256;
+
 export async function getGuildMember({ guildId, accessToken }) {
-  // Get guild specific nickname and avatar, and fallback to user name and avatar
   return await fetch(`/discord/api/users/@me/guilds/${guildId}/member`, {
     method: "get",
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -8,21 +10,15 @@ export async function getGuildMember({ guildId, accessToken }) {
     .catch(() => null);
 }
 
-export function getUserAvatarUrl({
-  guildMember,
-  user,
-  cdn = `https://cdn.discordapp.com`,
-  size = 256,
-}) {
-  if (guildMember?.avatar != null && discordSdk.guildId != null) {
-    return `${cdn}/guilds/${discordSdk.guildId}/users/${user.id}/avatars/${guildMember.avatar}.png?size=${size}`;
-  }
-  if (user.avatar != null) {
-    return `${cdn}/avatars/${user.id}/${user.avatar}.png?size=${size}`;
-  }
+export function getUserAvatarUrl({ guildMember, user }) {
+  if (guildMember?.avatar != null && discordSdk.guildId != null)
+    return `${CDN}/guilds/${discordSdk.guildId}/users/${user.id}/avatars/${guildMember.avatar}.png?size=${SIZE}`;
 
-  const defaultAvatarIndex = Math.abs(Number(user.id) >> 22) % 6; //(BigInt(user.id) >> 22n)) % 6n;
-  return `${cdn}/embed/avatars/${defaultAvatarIndex}.png?size=${size}`;
+  if (user.avatar != null)
+    return `${CDN}/avatars/${user.id}/${user.avatar}.png?size=${SIZE}`;
+
+  const defaultAvatarIndex = Math.abs(Number(user.id) >> 22) % 6; // (BigInt(user.id) >> 22n) % 6n;
+  return `${CDN}/embed/avatars/${defaultAvatarIndex}.png?size=${SIZE}`;
 }
 
 export function getUserDisplayName({ guildMember, user }) {

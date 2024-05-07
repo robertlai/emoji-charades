@@ -9,33 +9,39 @@ import {
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  /* options */
-});
+const io = new Server(httpServer, { pingInterval: 10000 });
+
+function updateGameState(channelId) {
+  io.to(channelId).emit("updateGameState", globalState.rooms[channelId]);
+}
 
 io.on("connection", (socket) => {
-  console.log("Connected");
-
   let localState = {};
 
   socket.on("createOrJoin", ({ channelId, name, avatarUri, id }) => {
-    localState = { id, channelId };
-    console.log(`User (${id}) joined in Channel (${channelId})`);
+    try {
+      localState = { id, channelId };
+      console.log(`User (${id}) joined in Channel (${channelId})`);
 
-    addUserToRoom({ id, name, avatarUri }, channelId);
-
-    socket.join(channelId);
-    io.to(channelId).emit("updateGameState", globalState.rooms[channelId]);
+      addUserToRoom({ id, name, avatarUri }, channelId);
+      socket.join(channelId);
+      updateGameState(channelId);
+    } catch (e) {
+      console.log(`Error: ${e}`);
+    }
   });
 
   socket.on("disconnect", () => {
-    const { id, channelId } = localState;
-    console.log(`User (${id}) left in Channel (${channelId})`);
+    try {
+      const { id, channelId } = localState;
+      console.log(`User (${id}) left in Channel (${channelId})`);
 
-    removeUserFromRoom(id, channelId);
-
-    io.to(channelId).emit("updateGameState", globalState.rooms[channelId]);
-    socket.leave(channelId);
+      removeUserFromRoom(id, channelId);
+      updateGameState(channelId);
+      socket.leave(channelId);
+    } catch (e) {
+      console.log(`Error: ${e}`);
+    }
   });
 });
 

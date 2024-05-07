@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useEffect, useRef, useState } from "react";
+import Loading from "@/components/Loading";
 import { initDiscordSdk } from "@/utils/discordSdk";
 import {
   getGuildMember,
@@ -27,6 +28,7 @@ export function AuthenticatedContextProvider({ clientId, children }) {
 
     async function setupDiscordSdk() {
       discordSdk = initDiscordSdk(clientId);
+
       await discordSdk.ready();
       console.log("Discord SDK is ready");
 
@@ -49,17 +51,17 @@ export function AuthenticatedContextProvider({ clientId, children }) {
           code,
         }),
       });
-      const { access_token } = await response.json();
-      return access_token;
+      const accessToken = (await response.json()).access_token;
+      return accessToken;
     }
 
     started.current = true;
-    setupDiscordSdk().then(async (access_token) => {
+    setupDiscordSdk().then(async (accessToken) => {
       console.log("Discord SDK is authenticated");
 
       // Authenticate with Discord client (using the access_token)
       let newAuth = await discordSdk.commands.authenticate({
-        access_token,
+        access_token: accessToken,
       });
       if (newAuth == null) {
         setState(AuthState.FAILED);
@@ -69,7 +71,7 @@ export function AuthenticatedContextProvider({ clientId, children }) {
       // Get user guild name and avatar
       const guildMember = await getGuildMember({
         guildId: discordSdk.guildId,
-        accessToken: access_token,
+        accessToken,
       });
       const avatarUri = getUserAvatarUrl({ guildMember, user: newAuth.user });
       const name = getUserDisplayName({ guildMember, user: newAuth.user });
@@ -87,8 +89,10 @@ export function AuthenticatedContextProvider({ clientId, children }) {
     });
   }, []);
 
-  if (state == AuthState.STARTED) return <>loading</>;
-  if (state == AuthState.FAILED) return <>failed</>;
+  if (state == AuthState.STARTED)
+    return <Loading message="Authenticating..." />;
+  if (state == AuthState.FAILED)
+    return <Loading message="Authentication failed." />;
 
   return (
     <AuthenticatedContext.Provider value={auth}>
