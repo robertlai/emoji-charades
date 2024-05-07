@@ -38,7 +38,7 @@ export function AuthenticatedContextProvider({ clientId, children }) {
         response_type: "code",
         state: "",
         prompt: "none",
-        scope: ["identify", "guilds"],
+        scope: ["identify", "guilds.members.read"],
       });
 
       // Retrieve an access_token from your activity's server
