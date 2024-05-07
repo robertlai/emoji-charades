@@ -41,3 +41,12 @@ export function removeUserFromRoom(userId, roomId) {
     delete globalState.rooms[roomId];
   }
 }
+
+export function startGame(roomId) {
+  if (globalState.rooms[roomId].flow != "lobby") {
+    console.log(`Game is not in lobby in Channel (${roomId})!`);
+    return;
+  }
+  globalState.rooms[roomId].flow = "playing";
+  globalState.rooms[roomId].turn = 0;
+}

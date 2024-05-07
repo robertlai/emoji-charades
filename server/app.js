@@ -5,6 +5,7 @@ import {
   globalState,
   addUserToRoom,
   removeUserFromRoom,
+  startGame,
 } from "./globalState.js";
 
 const app = express();
@@ -29,6 +30,14 @@ io.on("connection", (socket) => {
     } catch (e) {
       console.log(`Error: ${e}`);
     }
+  });
+
+  socket.on("startGame", () => {
+    const { channelId } = localState;
+    console.log(`Starting game in Channel (${channelId})`);
+
+    startGame(channelId);
+    updateGameState(channelId);
   });
 
   socket.on("disconnect", () => {
