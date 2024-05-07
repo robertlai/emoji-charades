@@ -4,6 +4,7 @@ import AuthenticatedContext from "@/contexts/AuthenticatedContext";
 import Emoji from "@/components/Emoji";
 import SocketContext from "@/contexts/SocketContext";
 import { emojiCodePoints, emojiStrategy } from "@/utils/emojis";
+import { socket } from "@/utils/socket";
 import styles from "./Game.module.scss";
 
 const MAX_RESULTS = 95;
@@ -15,6 +16,10 @@ export default function Game() {
 
   function onChange(e) {
     setQuery(e.target.value);
+  }
+
+  function onClickEmoji(cp) {
+    socket.emit("appendHint", { emoji: cp });
   }
 
   const isHinter = gameState.players[gameState.turn].id == user.id;
@@ -72,7 +77,11 @@ export default function Game() {
                 {gameState.currentWord.toUpperCase()}
               </span>
             </div>
-            <div className={styles.hint}></div>
+            <div className={styles.hint}>
+              {gameState.hint.map((cp) => (
+                <Emoji codePoint={cp} />
+              ))}
+            </div>
             <div className={styles.input}>
               <input
                 onChange={onChange}
@@ -80,13 +89,22 @@ export default function Game() {
               ></input>
               <div className={styles.results}>
                 {emojiResults.map((cp) => (
-                  <Emoji key={cp} codePoint={cp} />
+                  <div key={cp} onClick={() => onClickEmoji(cp)}>
+                    <Emoji codePoint={cp} />
+                  </div>
                 ))}
               </div>
             </div>
           </>
         ) : (
-          <>guesser</>
+          <>
+            <div>{gameState.currentWord.split("").map((c) => " _ ")}</div>
+            <div className={styles.hint}>
+              {gameState.hint.map((cp) => (
+                <Emoji codePoint={cp} />
+              ))}
+            </div>
+          </>
         )}
       </div>
       <div className={styles.chat}></div>

@@ -6,6 +6,7 @@ import {
   addUserToRoom,
   removeUserFromRoom,
   startGame,
+  appendHint,
 } from "./globalState.js";
 
 const app = express();
@@ -37,6 +38,12 @@ io.on("connection", (socket) => {
     console.log(`Starting game in Channel (${channelId})`);
 
     startGame(channelId);
+    updateGameState(channelId);
+  });
+
+  socket.on("appendHint", ({ emoji }) => {
+    const { channelId } = localState;
+    appendHint(channelId, emoji);
     updateGameState(channelId);
   });
 

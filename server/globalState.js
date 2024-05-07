@@ -1,5 +1,7 @@
 import { getWord } from "./words.js";
 
+const MAX_HINT_LENGTH = 28;
+
 export let globalState = {
   rooms: {},
 };
@@ -54,4 +56,17 @@ export function startGame(roomId) {
   globalState.rooms[roomId].flow = "playing";
   globalState.rooms[roomId].turn = 0;
   globalState.rooms[roomId].currentWord = getWord();
+  globalState.rooms[roomId].hint = [];
+}
+
+export function appendHint(roomId, emoji) {
+  if (globalState.rooms[roomId].flow != "playing") {
+    console.log(`Game is not playing in Channel (${roomId})!`);
+    return;
+  }
+  if (globalState.rooms[roomId].hint.length === MAX_HINT_LENGTH) {
+    console.log(`Max hint length reached in Channel (${roomId})!`);
+    return;
+  }
+  globalState.rooms[roomId].hint.push(emoji);
 }
