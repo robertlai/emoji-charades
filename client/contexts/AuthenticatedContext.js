@@ -1,65 +1,32 @@
 "use client";
-// import { Client } from "colyseus.js";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import Loading from "@/components/Loading";
+import { createContext, useEffect, useRef, useState } from "react";
 import { initDiscordSdk } from "@/utils/discordSdk";
 import {
   getGuildMember,
   getUserAvatarUrl,
   getUserDisplayName,
 } from "@/utils/user";
-import { io } from "socket.io-client";
 
-const AuthenticatedContext = createContext({
-  user: {
-    id: "",
-    username: "",
-    discriminator: "",
-    avatar: null,
-    public_flags: 0,
-  },
-  access_token: "",
-  scopes: [],
-  expires: "",
-  application: {
-    rpc_origins: undefined,
-    id: "",
-    name: "",
-    icon: null,
-    description: "",
-  },
-  guildMember: null,
-  client: undefined,
-  room: undefined,
-  channelName: "",
-  guildImg: "",
-});
+export const AuthState = {
+  STARTED: 0,
+  SUCCESS: 1,
+  FAILED: 2,
+};
+
+const AuthenticatedContext = createContext();
 
 export function AuthenticatedContextProvider({ clientId, children }) {
-  const authenticatedContext = useAuthenticatedContextSetup(clientId);
-  if (authenticatedContext == null) {
-    return <Loading />;
-  }
-  return (
-    <AuthenticatedContext.Provider value={authenticatedContext}>
-      {children}
-    </AuthenticatedContext.Provider>
-  );
-}
-
-export function useAuthenticatedContext() {
-  return useContext(AuthenticatedContext);
-}
-
-function useAuthenticatedContextSetup(clientId) {
+  const [state, setState] = useState(AuthState.STARTED);
   const [auth, setAuth] = useState(null);
   const started = useRef(false);
 
   useEffect(() => {
     if (started.current) return;
 
+    let discordSdk;
+
     async function setupDiscordSdk() {
-      const discordSdk = initDiscordSdk(clientId);
+      discordSdk = initDiscordSdk(clientId);
       await discordSdk.ready();
       console.log("Discord SDK is ready");
 
@@ -82,57 +49,52 @@ function useAuthenticatedContextSetup(clientId) {
           code,
         }),
       });
+      const { access_token } = await response.json();
+      return access_token;
+    }
 
-      const accessToken = (await response.json()).access_token;
+    started.current = true;
+    setupDiscordSdk().then(async (access_token) => {
+      console.log("Discord SDK is authenticated");
 
       // Authenticate with Discord client (using the access_token)
       let newAuth = await discordSdk.commands.authenticate({
-        access_token: accessToken,
+        access_token,
       });
-
       if (newAuth == null) {
-        throw new Error("Authenticate command failed");
+        setState(AuthState.FAILED);
+        return;
       }
 
-      let roomName = "Channel";
-      // Requesting the channel in GDMs (when the guild ID is null) requires
-      // the dm_channels.read scope which requires Discord approval.
-      if (discordSdk.channelId != null && discordSdk.guildId != null) {
-        // Over RPC collect info about the channel
-        const channel = await discordSdk.commands.getChannel({
-          channel_id: discordSdk.channelId,
-        });
-        if (channel.name != null) {
-          roomName = channel.name;
-        }
-      }
-
+      // Get user guild name and avatar
       const guildMember = await getGuildMember({
         guildId: discordSdk.guildId,
-        accessToken,
+        accessToken: access_token,
       });
       const avatarUri = getUserAvatarUrl({ guildMember, user: newAuth.user });
       const name = getUserDisplayName({ guildMember, user: newAuth.user });
 
-      const socket = io();
-      socket.on("connect", () => {
-        console.log("connected");
-      });
-
       setAuth({
         ...newAuth,
-        guildMember,
+        display: {
+          name,
+          avatarUri,
+        },
+        guildId: discordSdk.guildId,
+        channelId: discordSdk.channelId,
       });
-    }
-
-    started.current = true;
-    setupDiscordSdk().then(() => {
-      console.log("Discord SDK is authenticated");
-
-      // We can now make API calls within the scopes we requested in setupDiscordSDK()
-      // Note: the access_token returned is a sensitive secret and should be treated as such
+      setState(AuthState.SUCCESS);
     });
   }, []);
 
-  return auth;
+  if (state == AuthState.STARTED) return <>loading</>;
+  if (state == AuthState.FAILED) return <>failed</>;
+
+  return (
+    <AuthenticatedContext.Provider value={auth}>
+      {children}
+    </AuthenticatedContext.Provider>
+  );
 }
+
+export default AuthenticatedContext;

@@ -1,10 +1,13 @@
-import Lobby from "@/components/Lobby";
+import Main from "@/components/Main";
 import { AuthenticatedContextProvider } from "@/contexts/AuthenticatedContext";
+import { SocketContextProvider } from "@/contexts/SocketContext";
 
-export default function LobbyPage() {
+export default function Page() {
   return (
     <AuthenticatedContextProvider clientId={process.env.DISCORD_CLIENT_ID}>
-      <Lobby />
+      <SocketContextProvider>
+        <Main />
+      </SocketContextProvider>
     </AuthenticatedContextProvider>
   );
 }

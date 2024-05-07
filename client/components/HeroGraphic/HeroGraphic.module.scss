@@ -1,20 +1,19 @@
 .container {
-  width: 240px;
-  height: 240px;
+  height: 30vh;
   display: flex;
   justify-content: center;
   align-items: center;
 
   img {
-    font-size: 128px;
+    font-size: 15vh;
   }
 
   .border {
     position: absolute;
-    width: 240px;
-    height: 240px;
-    border: 16px dashed #55ccff;
-    border-radius: 120px;
+    width: 30vh;
+    height: 30vh;
+    border: 2vh dashed #55ccff;
+    border-radius: 15vh;
     animation: spin 10s linear infinite;
 
     @keyframes spin {

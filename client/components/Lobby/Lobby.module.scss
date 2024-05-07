@@ -1,12 +1,41 @@
 .main {
   height: 100vh;
-  padding: 64px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: space-between;
+  // align-items: center;
+
+  .hero {
+    height: 60vh;
+    display: flex;
+    gap: 4vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
   h1 {
-    font-size: 64px;
+    font-size: 8vh;
     color: darken(#55ccff, 30%);
+  }
+
+  .players {
+    height: 40vh;
+    display: flex;
+    justify-content: center;
+    gap: 4vh;
+  }
+
+  .lobbyPlayer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 2.5vh;
+
+    img {
+      width: 12vh;
+      height: 12vh;
+      border-radius: 6vh;
+    }
   }
 }
