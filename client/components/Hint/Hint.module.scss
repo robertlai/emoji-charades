@@ -1,0 +1,11 @@
+.hint {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  font-size: 10vh;
+  gap: 2vw;
+  overflow: hidden;
+  flex-wrap: wrap;
+}

@@ -1,5 +1,10 @@
 .main {
   height: 100vh;
+  display: flex;
+
+  .lobby {
+    flex: 1;
+  }
 
   .hero {
     height: 60vh;
@@ -23,7 +28,7 @@
     background-color: darken(#55ccff, 30%);
     border: none;
     border-radius: 1vh;
-    transition: all 0.2s;
+    transition: background-color 0.2s, box-shadow 0.2s;
 
     &:hover,
     &:focus {

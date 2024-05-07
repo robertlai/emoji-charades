@@ -1,0 +1,26 @@
+.emojiPicker {
+  height: 32vh;
+
+  input {
+    font-size: 3vh;
+    margin-bottom: 1vh;
+    padding: 1vh;
+    width: 100%;
+  }
+
+  .results {
+    display: flex;
+    gap: 1vh;
+    flex-wrap: wrap;
+    justify-content: left;
+
+    img {
+      cursor: pointer;
+      transition: scale 0.1s;
+
+      &:hover {
+        scale: 1.25;
+      }
+    }
+  }
+}

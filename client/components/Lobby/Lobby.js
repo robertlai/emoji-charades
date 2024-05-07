@@ -1,5 +1,6 @@
 "use client";
 import { useContext } from "react";
+import Chat from "@/components/Chat";
 import HeroGraphic from "@/components/HeroGraphic";
 import SocketContext from "@/contexts/SocketContext";
 import { socket } from "@/utils/socket";
@@ -15,26 +16,28 @@ export default function Lobby() {
 
   return (
     <main className={styles.main}>
-      <div className={styles.hero}>
-        <HeroGraphic />
-        <h1>Emoji Charades</h1>
-        <button
-          className={!canStart && styles.disabled}
-          disabled={!canStart}
-          onClick={startGame}
-        >
-          Start
-        </button>
+      <div className={styles.lobby}>
+        <div className={styles.hero}>
+          <HeroGraphic />
+          <h1>Emoji Charades</h1>
+          <button
+            className={!canStart && styles.disabled}
+            disabled={!canStart}
+            onClick={startGame}
+          >
+            Start
+          </button>
+        </div>
+        <div className={styles.players}>
+          {gameState.players.map(({ id, name, avatarUri }) => (
+            <div key={id} className={styles.lobbyPlayer}>
+              <img src={avatarUri} />
+              <span>{name}</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className={styles.players}>
-        {gameState.players.map(({ id, name, avatarUri }) => (
-          <div key={id} className={styles.lobbyPlayer}>
-            <img src={avatarUri} />
-            <span>{name}</span>
-          </div>
-        ))}
-      </div>
-      {/* <span>{JSON.stringify(gameState)}</span> */}
+      <Chat />
     </main>
   );
 }

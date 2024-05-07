@@ -8,6 +8,8 @@ const SocketContext = createContext();
 export function SocketContextProvider({ children }) {
   const [connected, setConnected] = useState(socket.connected);
   const [gameState, setGameState] = useState(null);
+  const [messages, setMessages] = useState([]);
+
   useEffect(() => {
     function onConnect() {
       setConnected(true);
@@ -21,21 +23,27 @@ export function SocketContextProvider({ children }) {
       setGameState(newState);
     }
 
+    function onMessage(message) {
+      setMessages([message].concat(messages));
+    }
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("updateGameState", onUpdateGameState);
+    socket.on("message", onMessage);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
       socket.off("updateGameState", onUpdateGameState);
+      socket.off("message", onMessage);
     };
-  }, []);
+  }, [messages]);
 
   if (!connected) return <Loading message="Connecting to server..." />;
 
   return (
-    <SocketContext.Provider value={{ gameState }}>
+    <SocketContext.Provider value={{ gameState, messages }}>
       {children}
     </SocketContext.Provider>
   );

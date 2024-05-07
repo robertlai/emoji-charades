@@ -7,6 +7,7 @@ import {
   removeUserFromRoom,
   startGame,
   appendHint,
+  checkGuess,
 } from "./globalState.js";
 
 const app = express();
@@ -17,12 +18,16 @@ function updateGameState(channelId) {
   io.to(channelId).emit("updateGameState", globalState.rooms[channelId]);
 }
 
+function gameMessage(channelId, from, text) {
+  io.to(channelId).emit("message", { from, text, ts: Date.now() });
+}
+
 io.on("connection", (socket) => {
   let localState = {};
 
   socket.on("createOrJoin", ({ channelId, name, avatarUri, id }) => {
     try {
-      localState = { id, channelId };
+      localState = { id, channelId, name };
       console.log(`User (${id}) joined in Channel (${channelId})`);
 
       addUserToRoom({ id, name, avatarUri }, channelId);
@@ -45,6 +50,24 @@ io.on("connection", (socket) => {
     const { channelId } = localState;
     appendHint(channelId, emoji);
     updateGameState(channelId);
+  });
+
+  socket.on("guess", ({ guess }) => {
+    const { id, channelId, name } = localState;
+    try {
+      const isMatch = checkGuess(channelId, id, guess);
+      if (isMatch) {
+        gameMessage(channelId, null, `${name} guessed the word!`);
+        updateGameState(channelId);
+      } else {
+        gameMessage(channelId, id, guess);
+      }
+    } catch (e) {
+      socket.emit("message", {
+        text: "You already guessed the word!",
+        ts: Date.now(),
+      });
+    }
   });
 
   socket.on("disconnect", () => {

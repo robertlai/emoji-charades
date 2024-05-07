@@ -54,9 +54,11 @@ export function startGame(roomId) {
     return;
   }
   globalState.rooms[roomId].flow = "playing";
+  // TODO: Fix case of user leaving during game
   globalState.rooms[roomId].turn = 0;
   globalState.rooms[roomId].currentWord = getWord();
   globalState.rooms[roomId].hint = [];
+  globalState.rooms[roomId].playersGuessed = [];
 }
 
 export function appendHint(roomId, emoji) {
@@ -69,4 +71,35 @@ export function appendHint(roomId, emoji) {
     return;
   }
   globalState.rooms[roomId].hint.push(emoji);
+}
+
+export function checkGuess(roomId, userId, guess) {
+  if (globalState.rooms[roomId].flow != "playing") {
+    console.log(`Game is not playing in Channel (${roomId})!`);
+    return false;
+  }
+  if (guess.toLowerCase() == globalState.rooms[roomId].currentWord) {
+    if (globalState.rooms[roomId].playersGuessed.includes(userId)) {
+      console.log(`User (${userId}) already guessed in Channel (${roomId})!`);
+      throw "Already guessed";
+    }
+    globalState.rooms[roomId].playerScores[userId] += 100;
+    globalState.rooms[roomId].playersGuessed.push(userId);
+    if (
+      globalState.rooms[roomId].playersGuessed.length >=
+      globalState.rooms[roomId].players.length - 2
+    ) {
+      globalState.rooms[roomId].turn += 1;
+      globalState.rooms[roomId].currentWord = getWord();
+      globalState.rooms[roomId].hint = [];
+      globalState.rooms[roomId].playersGuessed = [];
+    }
+    if (
+      globalState.rooms[roomId].turn >= globalState.rooms[roomId].players.length
+    ) {
+      globalState.rooms[roomId].flow = "scoreboard";
+    }
+    return true;
+  }
+  return false;
 }
