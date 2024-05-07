@@ -1,0 +1,80 @@
+.game {
+  height: 100vh;
+  display: flex;
+
+  .playerList {
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    padding: 4vh 1vw 4vh 0;
+    background-color: #eee;
+  }
+
+  .player {
+    padding: 1vh 3vh 1vh 1vh;
+    display: flex;
+    gap: 1.5vh;
+    align-items: center;
+    background-color: #55ccff;
+    color: white;
+    font-size: 2.5vh;
+    border-radius: 0 4vh 4vh 0;
+
+    img {
+      width: 6vh;
+      border-radius: 3vh;
+    }
+
+    .name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .main {
+    flex: 1;
+    padding: 5vh;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 4vh;
+  }
+
+  .word {
+    color: darken(#55ccff, 30%);
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  .hint {
+    flex: 1;
+  }
+
+  .input {
+    height: 30vh;
+
+    input {
+      font-size: 3vh;
+      margin-bottom: 2vh;
+      padding: 1vh;
+      width: 100%;
+    }
+  }
+
+  .results {
+    display: flex;
+    gap: 1vh;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .chat {
+    width: 20vw;
+    display: flex;
+    flex-direction: column;
+    padding: 4vh 0 4vh 1vw;
+    background-color: #eee;
+  }
+}

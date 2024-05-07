@@ -1,5 +1,6 @@
 "use client";
 import { useContext, useEffect } from "react";
+import Game from "@/components/Game";
 import Loading from "@/components/Loading";
 import Lobby from "@/components/Lobby";
 import AuthenticatedContext from "@/contexts/AuthenticatedContext";
@@ -17,5 +18,6 @@ export default function Main() {
 
   if (!gameState) return <Loading message="Joining room..." />;
   if (gameState.flow == "lobby") return <Lobby />;
+  if (gameState.flow == "playing") return <Game />;
   return <Loading message="Error: Unexpected game state." />;
 }

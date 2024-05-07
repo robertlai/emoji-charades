@@ -1,3 +1,5 @@
+import { getWord } from "./words.js";
+
 export let globalState = {
   rooms: {},
 };
@@ -7,6 +9,7 @@ function createRoom(roomId) {
     flow: "lobby",
     players: [],
     playerConnections: {},
+    playerScores: {},
   };
 }
 
@@ -18,6 +21,7 @@ export function addUserToRoom(user, roomId) {
   if (!globalState.rooms[roomId].playerConnections[user.id]) {
     globalState.rooms[roomId].players.push(user);
     globalState.rooms[roomId].playerConnections[user.id] = 1;
+    globalState.rooms[roomId].playerScores[user.id] = 0;
   } else {
     globalState.rooms[roomId].playerConnections[user.id] += 1;
   }
@@ -49,4 +53,5 @@ export function startGame(roomId) {
   }
   globalState.rooms[roomId].flow = "playing";
   globalState.rooms[roomId].turn = 0;
+  globalState.rooms[roomId].currentWord = getWord();
 }
