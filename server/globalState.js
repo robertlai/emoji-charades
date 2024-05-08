@@ -40,7 +40,7 @@ function startTurn(roomId) {
   globalState.rooms[roomId].currentWord = getWord();
   globalState.rooms[roomId].hint = [];
   globalState.rooms[roomId].playersGuessed = [];
-  globalState.rooms[roomId].timeRemaining = 10;
+  globalState.rooms[roomId].timeRemaining = 30;
   globalState.timers[roomId] = setInterval(() => decrementTime(roomId), 1000);
 }
 
@@ -85,6 +85,7 @@ export function startGame(roomId) {
   globalState.rooms[roomId].flow = "playing";
   // TODO: Fix case of user leaving during game
   globalState.rooms[roomId].turn = 0;
+  globalState.rooms[roomId].playerScores = {};
   startTurn(roomId);
 }
 

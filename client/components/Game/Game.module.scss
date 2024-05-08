@@ -17,4 +17,13 @@
     font-weight: bold;
     text-decoration: underline;
   }
+
+  .top {
+    display: flex;
+    align-items: center;
+  }
+
+  .text {
+    flex: 1;
+  }
 }

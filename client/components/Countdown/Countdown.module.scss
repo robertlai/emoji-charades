@@ -1,0 +1,23 @@
+.container {
+  height: 4vh;
+  width: 4vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .border {
+    position: absolute;
+    width: 8vh;
+    height: 8vh;
+    border: 1vh dashed #55ccff;
+    border-radius: 4vh;
+    animation: spin 10s linear infinite;
+
+    @keyframes spin {
+      100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+  }
+}
