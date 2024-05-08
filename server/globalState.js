@@ -85,7 +85,9 @@ export function startGame(roomId) {
   globalState.rooms[roomId].flow = "playing";
   // TODO: Fix case of user leaving during game
   globalState.rooms[roomId].turn = 0;
-  globalState.rooms[roomId].playerScores = {};
+  globalState.rooms[roomId].playerScores = globalState.rooms[
+    roomId
+  ].players.reduce((acc, cur) => ({ ...acc, [cur.id]: 0 }), {});
   startTurn(roomId);
 }
 

@@ -25,16 +25,24 @@ export default function EmojiPicker() {
   Object.keys(emojiStrategy).forEach((key) => {
     const { shortname_alternates, keywords, shortname, unicode_output } =
       emojiStrategy[key];
-    if (emojiCodePoints.indexOf(unicode_output) < 0) return;
     const snakeQuery = query.replaceAll(" ", "_");
     if (shortname.indexOf(snakeQuery) > -1) {
-      return results1.push(unicode_output);
+      if (emojiCodePoints.indexOf(unicode_output) > -1)
+        results1.push(unicode_output);
+      else if (emojiCodePoints.indexOf(key) > -1) results1.push(key);
+      return;
     }
     if (shortname_alternates && shortname_alternates.indexOf(snakeQuery) > -1) {
-      return results2.push(unicode_output);
+      if (emojiCodePoints.indexOf(unicode_output) > -1)
+        results2.push(unicode_output);
+      else if (emojiCodePoints.indexOf(key) > -1) results2.push(key);
+      return;
     }
     if (keywords && keywords.indexOf(query) > -1) {
-      return results3.push(unicode_output);
+      if (emojiCodePoints.indexOf(unicode_output) > -1)
+        results3.push(unicode_output);
+      else if (emojiCodePoints.indexOf(key) > -1) results3.push(key);
+      return;
     }
   });
 
