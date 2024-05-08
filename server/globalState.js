@@ -40,7 +40,7 @@ function startTurn(roomId) {
   globalState.rooms[roomId].currentWord = getWord();
   globalState.rooms[roomId].hint = [];
   globalState.rooms[roomId].playersGuessed = [];
-  globalState.rooms[roomId].timeRemaining = 30;
+  globalState.rooms[roomId].timeRemaining = 60;
   globalState.timers[roomId] = setInterval(() => decrementTime(roomId), 1000);
 }
 
