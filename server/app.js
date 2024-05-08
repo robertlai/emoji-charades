@@ -1,6 +1,4 @@
-import express from "express";
-import { createServer } from "http";
-import { Server } from "socket.io";
+import { app, httpServer, io } from "./io.js";
 import {
   globalState,
   addUserToRoom,
@@ -9,10 +7,6 @@ import {
   appendHint,
   checkGuess,
 } from "./globalState.js";
-
-const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, { pingInterval: 10000 });
 
 function updateGameState(channelId) {
   io.to(channelId).emit("updateGameState", globalState.rooms[channelId]);
@@ -68,6 +62,12 @@ io.on("connection", (socket) => {
         ts: Date.now(),
       });
     }
+  });
+
+  socket.on("returnToLobby", () => {
+    const { channelId } = localState;
+    globalState.rooms[channelId].flow = "lobby";
+    socket.emit("updateGameState", globalState.rooms[channelId]);
   });
 
   socket.on("disconnect", () => {

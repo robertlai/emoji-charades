@@ -15,7 +15,7 @@ export default function Game() {
   const isHinter = gameState.players[gameState.turn].id == user.id;
 
   return (
-    <div className={styles.game}>
+    <main className={styles.game}>
       <GamePlayerList />
       <div className={styles.main}>
         {isHinter ? (
@@ -34,6 +34,6 @@ export default function Game() {
         {isHinter && <EmojiPicker />}
       </div>
       <Chat />
-    </div>
+    </main>
   );
 }

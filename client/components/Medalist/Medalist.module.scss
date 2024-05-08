@@ -1,0 +1,45 @@
+.medal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20vw;
+  height: 20vw;
+  border-radius: 10vw;
+  border: 1.5vw solid;
+  font-size: 3vh;
+
+  .avatar {
+    margin-top: 1vh;
+    width: 8vw;
+    border-radius: 4vw;
+    box-shadow: 0 0 0.5vw black;
+  }
+
+  .emoji {
+    margin-top: -3vh;
+    font-size: 10vh;
+  }
+}
+
+.medal--1 {
+  @extend .medal;
+  border-color: #ffac33;
+  order: 1;
+}
+
+.medal--2 {
+  @extend .medal;
+  border-color: #ccd6dd;
+  scale: 0.8;
+  order: 2;
+  margin-top: 2vw;
+}
+
+.medal--3 {
+  @extend .medal;
+  border-color: #ff8a3b;
+  scale: 0.7;
+  order: 0;
+  margin-top: 3vw;
+}

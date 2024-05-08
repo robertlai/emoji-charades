@@ -1,0 +1,71 @@
+.scoreboard {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  overflow: hidden;
+  padding: 4vh;
+
+  .medalists {
+    display: flex;
+  }
+
+  .losers {
+    display: flex;
+    flex-direction: column;
+    background-color: #eee;
+    width: 60vw;
+    border-radius: 2vw;
+    padding: 2vw;
+    overflow-y: auto;
+    margin-bottom: 2vh;
+  }
+
+  .loser {
+    background-color: white;
+    border-radius: 1vw;
+    padding: 1vw;
+    margin-bottom: 1vw;
+    display: flex;
+    gap: 1vw;
+  }
+
+  .place {
+    color: darken(#55ccff, 40%);
+    background-color: #55ccff;
+    text-align: center;
+    line-height: 1.5em;
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 0.75em;
+    font-weight: bold;
+  }
+
+  .name {
+    flex: 1;
+  }
+
+  button {
+    min-width: 16vw;
+    padding: 1.5vh;
+    font-size: 3vh;
+    color: white;
+    background-color: darken(#55ccff, 30%);
+    border: none;
+    border-radius: 1vh;
+    transition: background-color 0.2s, box-shadow 0.2s;
+
+    &:hover,
+    &:focus {
+      outline: none;
+      background-color: #55ccff;
+      box-shadow: 0.5vh 0.5vh 0 darken(#55ccff, 30%);
+    }
+
+    &.disabled {
+      pointer-events: none;
+      background-color: #ccc;
+    }
+  }
+}

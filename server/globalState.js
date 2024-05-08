@@ -1,10 +1,31 @@
+import { io } from "./io.js";
 import { getWord } from "./words.js";
+
+// TOOD: fix spaghetti code
 
 const MAX_HINT_LENGTH = 28;
 
 export let globalState = {
   rooms: {},
+  timers: {},
 };
+
+function decrementTime(roomId) {
+  globalState.rooms[roomId].timeRemaining -= 1;
+  if (globalState.rooms[roomId].timeRemaining === 0) {
+    clearInterval(globalState.timers[roomId]);
+    globalState.rooms[roomId].turn += 1;
+    if (
+      globalState.rooms[roomId].turn >= globalState.rooms[roomId].players.length
+    ) {
+      globalState.rooms[roomId].flow = "scoreboard";
+    } else {
+      startTurn(roomId);
+    }
+  }
+
+  io.to(roomId).emit("updateGameState", globalState.rooms[roomId]);
+}
 
 function createRoom(roomId) {
   globalState.rooms[roomId] = {
@@ -19,6 +40,8 @@ function startTurn(roomId) {
   globalState.rooms[roomId].currentWord = getWord();
   globalState.rooms[roomId].hint = [];
   globalState.rooms[roomId].playersGuessed = [];
+  globalState.rooms[roomId].timeRemaining = 10;
+  globalState.timers[roomId] = setInterval(() => decrementTime(roomId), 1000);
 }
 
 export function addUserToRoom(user, roomId) {
@@ -87,19 +110,26 @@ export function checkGuess(roomId, userId, guess) {
       console.log(`User (${userId}) already guessed in Channel (${roomId})!`);
       throw "Already guessed";
     }
-    globalState.rooms[roomId].playerScores[userId] += 100;
+    globalState.rooms[roomId].playerScores[userId] +=
+      (globalState.rooms[roomId].players.length -
+        globalState.rooms[roomId].playersGuessed.length -
+        1) *
+      100;
     globalState.rooms[roomId].playersGuessed.push(userId);
     if (
       globalState.rooms[roomId].playersGuessed.length >=
       globalState.rooms[roomId].players.length - 2
     ) {
+      clearInterval(globalState.timers[roomId]);
       globalState.rooms[roomId].turn += 1;
-      startTurn(roomId);
-    }
-    if (
-      globalState.rooms[roomId].turn >= globalState.rooms[roomId].players.length
-    ) {
-      globalState.rooms[roomId].flow = "scoreboard";
+      if (
+        globalState.rooms[roomId].turn >=
+        globalState.rooms[roomId].players.length
+      ) {
+        globalState.rooms[roomId].flow = "scoreboard";
+      } else {
+        startTurn(roomId);
+      }
     }
     return true;
   }
