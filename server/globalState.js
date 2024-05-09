@@ -15,6 +15,10 @@ function decrementTime(roomId) {
   if (globalState.rooms[roomId].timeRemaining === 0) {
     clearInterval(globalState.timers[roomId]);
     globalState.rooms[roomId].turn += 1;
+    io.to(roomId).emit("message", {
+      text: `The word was ${globalState.rooms[roomId].currentWord}`,
+      ts: Date.now(),
+    });
     if (
       globalState.rooms[roomId].turn >= globalState.rooms[roomId].players.length
     ) {
@@ -125,6 +129,10 @@ export function checkGuess(roomId, userId, guess) {
     ) {
       clearInterval(globalState.timers[roomId]);
       globalState.rooms[roomId].turn += 1;
+      io.to(roomId).emit("message", {
+        text: `The word was ${globalState.rooms[roomId].currentWord}`,
+        ts: Date.now(),
+      });
       if (
         globalState.rooms[roomId].turn >=
         globalState.rooms[roomId].players.length

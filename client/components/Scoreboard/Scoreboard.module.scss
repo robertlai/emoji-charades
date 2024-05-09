@@ -1,11 +1,17 @@
 .scoreboard {
   height: 100vh;
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  overflow: hidden;
-  padding: 4vh;
+  flex-direction: row;
+
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    overflow: hidden;
+    padding: 4vh;
+  }
 
   .medalists {
     display: flex;
