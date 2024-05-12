@@ -1,14 +1,8 @@
 .loading {
   height: 100vh;
   display: flex;
-  gap: 2vh;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   font-size: 2.5vh;
-
-  h1 {
-    font-size: 8vh;
-    color: darken(#55ccff, 30%);
-  }
 }

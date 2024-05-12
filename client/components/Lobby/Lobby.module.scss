@@ -1,46 +1,10 @@
-.main {
-  height: 100vh;
-  display: flex;
-
-  .lobby {
-    flex: 1;
-  }
-
-  .hero {
+.lobby {
+  .top {
     height: 60vh;
     display: flex;
-    gap: 2vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-  }
-
-  h1 {
-    font-size: 8vh;
-    color: darken(#55ccff, 30%);
-  }
-
-  button {
-    min-width: 16vw;
-    padding: 1.5vh;
-    font-size: 3vh;
-    color: white;
-    background-color: darken(#55ccff, 30%);
-    border: none;
-    border-radius: 1vh;
-    transition: background-color 0.2s, box-shadow 0.2s;
-
-    &:hover,
-    &:focus {
-      outline: none;
-      background-color: #55ccff;
-      box-shadow: 0.5vh 0.5vh 0 darken(#55ccff, 30%);
-    }
-
-    &.disabled {
-      pointer-events: none;
-      background-color: #ccc;
-    }
   }
 
   .players {
@@ -52,9 +16,9 @@
 
   .lobbyPlayer {
     display: flex;
-    gap: 1vh;
     flex-direction: column;
     align-items: center;
+    gap: 1vh;
     font-size: 2.5vh;
 
     img {

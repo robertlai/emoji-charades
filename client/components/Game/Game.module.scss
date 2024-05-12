@@ -1,7 +1,8 @@
+@import "@/utils/color.module.scss";
+
 .game {
   height: 100vh;
   display: flex;
-  overflow: hidden;
 
   .main {
     flex: 1;
@@ -13,7 +14,7 @@
   }
 
   .word {
-    color: darken(#55ccff, 30%);
+    color: $emoji-blue-dark;
     font-weight: bold;
     text-decoration: underline;
   }

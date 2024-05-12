@@ -1,4 +1,4 @@
-import { app, httpServer, io } from "./io.js";
+import { app, httpServer, io } from "./server.js";
 import {
   globalState,
   addUserToRoom,

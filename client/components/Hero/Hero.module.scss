@@ -1,0 +1,42 @@
+@import "@/utils/color.module.scss";
+
+.hero {
+  display: flex;
+  gap: 2vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2vh;
+
+  .graphic {
+    height: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      font-size: 15vh;
+    }
+
+    .border {
+      position: absolute;
+      width: 30vh;
+      height: 30vh;
+      border: 2vh dashed $emoji-blue;
+      border-radius: 15vh;
+      animation: spin 10s linear infinite;
+
+      @keyframes spin {
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+    }
+  }
+
+  h1 {
+    font-size: 8vh;
+    color: $emoji-blue-dark;
+  }
+}

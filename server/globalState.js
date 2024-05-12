@@ -1,4 +1,4 @@
-import { io } from "./io.js";
+import { io } from "./server.js";
 import { getWord } from "./words.js";
 
 // TOOD: fix spaghetti code

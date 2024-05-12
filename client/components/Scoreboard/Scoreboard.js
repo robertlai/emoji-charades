@@ -1,6 +1,6 @@
 "use client";
 import { useContext } from "react";
-import Chat from "@/components/Chat";
+import Button from "@/components/Button";
 import Medalist from "@/components/Medalist";
 import SocketContext from "@/contexts/SocketContext";
 import { socket } from "@/utils/socket";
@@ -14,7 +14,7 @@ export default function Scoreboard() {
     socket.emit("returnToLobby");
   }
 
-  let scoreboard = players
+  const scoreboard = players
     .map(({ id, name, avatarUri }) => ({
       id,
       name,
@@ -24,34 +24,30 @@ export default function Scoreboard() {
     .sort((a, b) => b.score - a.score);
 
   return (
-    <main className={styles.scoreboard}>
-      <div className={styles.main}>
-        <div className={styles.medalists}>
-          {scoreboard.slice(0, 3).map(({ id, name, avatarUri, score }, i) => (
-            <Medalist
-              key={id}
-              place={i + 1}
-              name={name}
-              avatarUri={avatarUri}
-              score={score}
-            />
+    <div className={styles.scoreboard}>
+      <div className={styles.medalists}>
+        {scoreboard.slice(0, 3).map(({ id, name, avatarUri, score }, i) => (
+          <Medalist
+            key={id}
+            place={i + 1}
+            name={name}
+            avatarUri={avatarUri}
+            score={score}
+          />
+        ))}
+      </div>
+      {scoreboard.length > 3 && (
+        <div className={styles.losers}>
+          {scoreboard.slice(3).map(({ id, name, score }, i) => (
+            <div key={id} className={styles.loser}>
+              <span className={styles.place}>{i + 4}</span>
+              <span className={styles.name}>{name}</span>
+              <span>{score} pts</span>
+            </div>
           ))}
         </div>
-        {scoreboard.length > 3 && (
-          <div className={styles.losers}>
-            {scoreboard.slice(3).map(({ id, name, score }, i) => (
-              <div key={id} className={styles.loser}>
-                <div className={styles.place}>{i + 4}</div>
-                <div className={styles.name}>{name}</div>
-                <span>{score} pts</span>
-              </div>
-            ))}
-          </div>
-        )}
-        <button onClick={onClickReturn}>Return to lobby</button>
-      </div>
-
-      <Chat />
-    </main>
+      )}
+      <Button onClick={onClickReturn}>Return to lobby</Button>
+    </div>
   );
 }

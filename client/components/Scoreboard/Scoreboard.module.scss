@@ -1,17 +1,13 @@
+@import "@/utils/color.module.scss";
+
 .scoreboard {
   height: 100vh;
   display: flex;
-  flex-direction: row;
-
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    overflow: hidden;
-    padding: 4vh;
-  }
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  overflow: hidden;
+  padding: 4vh;
 
   .medalists {
     display: flex;
@@ -20,7 +16,7 @@
   .losers {
     display: flex;
     flex-direction: column;
-    background-color: #eee;
+    background-color: $light-gray;
     width: 60vw;
     border-radius: 2vw;
     padding: 2vw;
@@ -38,8 +34,8 @@
   }
 
   .place {
-    color: darken(#55ccff, 40%);
-    background-color: #55ccff;
+    color: $emoji-blue-dark;
+    background-color: $emoji-blue;
     text-align: center;
     line-height: 1.5em;
     width: 1.5em;
@@ -50,28 +46,5 @@
 
   .name {
     flex: 1;
-  }
-
-  button {
-    min-width: 16vw;
-    padding: 1.5vh;
-    font-size: 3vh;
-    color: white;
-    background-color: darken(#55ccff, 30%);
-    border: none;
-    border-radius: 1vh;
-    transition: background-color 0.2s, box-shadow 0.2s;
-
-    &:hover,
-    &:focus {
-      outline: none;
-      background-color: #55ccff;
-      box-shadow: 0.5vh 0.5vh 0 darken(#55ccff, 30%);
-    }
-
-    &.disabled {
-      pointer-events: none;
-      background-color: #ccc;
-    }
   }
 }

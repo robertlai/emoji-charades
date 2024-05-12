@@ -1,8 +1,10 @@
+@import "@/utils/color.module.scss";
+
 .chat {
   width: 20vw;
   display: flex;
   flex-direction: column;
-  background-color: #eee;
+  background-color: $light-gray;
   font-size: 12pt;
 
   .messages {
@@ -22,7 +24,7 @@
     gap: 1vh;
     align-items: center;
     font-size: 12pt;
-    color: #333;
+    color: $light-black;
     margin-bottom: 4px;
 
     img {
@@ -35,7 +37,7 @@
     font-size: 12pt;
 
     &.system {
-      color: darken(#55ccff, 30%);
+      color: $emoji-blue-dark;
     }
   }
 

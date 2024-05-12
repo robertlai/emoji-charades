@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react";
 import Emoji from "@/components/Emoji";
 import { emojiCodePoints } from "@/utils/emojis";
-import styles from "./HeroGraphic.module.scss";
+import styles from "./Hero.module.scss";
 
-export default function HeroGraphic() {
+export default function Hero() {
   const [emoji, setEmoji] = useState("1f60a"); // 😊
 
   useEffect(() => {
@@ -20,9 +20,12 @@ export default function HeroGraphic() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <Emoji codePoint={emoji} />
-      <div className={styles.border} />
+    <div className={styles.hero}>
+      <div className={styles.graphic}>
+        <Emoji codePoint={emoji} />
+        <div className={styles.border} />
+      </div>
+      <h1>Emoji Charades</h1>
     </div>
   );
 }
