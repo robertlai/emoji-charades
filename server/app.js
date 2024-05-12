@@ -1,86 +1,79 @@
-import { app, httpServer, io } from "./server.js";
+import { httpServer, io } from "./server.js";
 import {
-  globalState,
-  addUserToRoom,
-  removeUserFromRoom,
-  startGame,
-  appendHint,
-  checkGuess,
-} from "./globalState.js";
-
-function updateGameState(channelId) {
-  io.to(channelId).emit("updateGameState", globalState.rooms[channelId]);
-}
-
-function gameMessage(channelId, from, text) {
-  io.to(channelId).emit("message", { from, text, ts: Date.now() });
-}
+  createOrJoinRoom,
+  leaveRoom,
+  isFlow,
+  transitionRoom,
+} from "./rooms.js";
+import { startGame, appendHint, checkGuess } from "./games.js";
+import { broadcastMessage, whisperMessage } from "./messages.js";
 
 io.on("connection", (socket) => {
-  let localState = {};
+  let user = {};
 
   socket.on("createOrJoin", ({ channelId, name, avatarUri, id }) => {
     try {
-      localState = { id, channelId, name };
-      console.log(`User (${id}) joined in Channel (${channelId})`);
+      user = { avatarUri, channelId, id, name };
+      console.log(`User (${id}) joined Channel (${channelId})`);
 
-      addUserToRoom({ id, name, avatarUri }, channelId);
       socket.join(channelId);
-      updateGameState(channelId);
+      createOrJoinRoom(channelId, user);
+    } catch (e) {
+      console.log(`Error: ${e}`);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    try {
+      const { id, channelId } = user;
+      console.log(`User (${id}) left Channel (${channelId})`);
+
+      leaveRoom(channelId, id);
+      socket.leave(channelId);
     } catch (e) {
       console.log(`Error: ${e}`);
     }
   });
 
   socket.on("startGame", () => {
-    const { channelId } = localState;
-    console.log(`Starting game in Channel (${channelId})`);
+    try {
+      const { channelId } = user;
+      console.log(`Starting game in Channel (${channelId})`);
 
-    startGame(channelId);
-    updateGameState(channelId);
+      startGame(channelId);
+    } catch (e) {
+      console.log(`Error: ${e}`);
+    }
   });
 
   socket.on("appendHint", ({ emoji }) => {
-    const { channelId } = localState;
-    appendHint(channelId, emoji);
-    updateGameState(channelId);
+    try {
+      const { channelId } = user;
+      appendHint(channelId, emoji);
+    } catch (e) {
+      console.log(`Error: ${e}`);
+    }
   });
 
-  socket.on("guess", ({ guess }) => {
-    const { id, channelId, name } = localState;
+  socket.on("message", ({ message }) => {
     try {
-      const isMatch = checkGuess(channelId, id, guess);
-      if (isMatch) {
-        gameMessage(channelId, null, `${name} guessed the word!`);
-        updateGameState(channelId);
-      } else {
-        gameMessage(channelId, id, guess);
+      const { id, channelId } = user;
+      if (isFlow(channelId, "game") && checkGuess(channelId, id, message)) {
+        return;
       }
+      broadcastMessage(channelId, id, message);
     } catch (e) {
-      socket.emit("message", {
-        text: "You already guessed the word!",
-        ts: Date.now(),
-      });
+      if (e == "already_guessed") {
+        whisperMessage(socket, null, "You already guessed the word!");
+        return;
+      }
+      console.log(`Error: ${e}`);
     }
   });
 
   socket.on("returnToLobby", () => {
-    const { channelId } = localState;
-    globalState.rooms[channelId].flow = "lobby";
-    socket.emit("updateGameState", globalState.rooms[channelId]);
-  });
-
-  socket.on("disconnect", () => {
-    try {
-      const { id, channelId } = localState;
-      console.log(`User (${id}) left in Channel (${channelId})`);
-
-      removeUserFromRoom(id, channelId);
-      updateGameState(channelId);
-      socket.leave(channelId);
-    } catch (e) {
-      console.log(`Error: ${e}`);
-    }
+    const { channelId } = user;
+    transitionRoom(channelId, "lobby");
   });
 });
 

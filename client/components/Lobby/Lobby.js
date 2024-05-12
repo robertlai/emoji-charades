@@ -7,8 +7,9 @@ import { socket } from "@/utils/socket";
 import styles from "./Lobby.module.scss";
 
 export default function Lobby() {
-  const { gameState } = useContext(SocketContext);
-  const canStart = gameState.players.length > 1;
+  const { roomState } = useContext(SocketContext);
+  const { activeUserIds, usersById } = roomState;
+  const canStart = activeUserIds.length > 1;
 
   function startGame() {
     socket.emit("startGame");
@@ -23,10 +24,10 @@ export default function Lobby() {
         </Button>
       </div>
       <div className={styles.players}>
-        {gameState.players.map(({ id, name, avatarUri }) => (
+        {activeUserIds.map((id) => (
           <div key={id} className={styles.lobbyPlayer}>
-            <img src={avatarUri} />
-            <span>{name}</span>
+            <img src={usersById[id].avatarUri} />
+            <span>{usersById[id].name}</span>
           </div>
         ))}
       </div>

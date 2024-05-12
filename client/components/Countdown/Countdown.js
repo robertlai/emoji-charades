@@ -8,7 +8,7 @@ export default function Countdown() {
 
   return (
     <div className={styles.container}>
-      {gameState.timeRemaining}
+      {gameState.current.timeRemaining}
       <div className={styles.border} />
     </div>
   );

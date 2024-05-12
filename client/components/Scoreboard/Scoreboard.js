@@ -7,42 +7,37 @@ import { socket } from "@/utils/socket";
 import styles from "./Scoreboard.module.scss";
 
 export default function Scoreboard() {
-  const { gameState } = useContext(SocketContext);
-  const { players, playerScores } = gameState;
+  const { roomState, gameState } = useContext(SocketContext);
+  const { usersById } = roomState;
+  const { scoresByUserId } = gameState;
+  const scoreOrderedUserIds = Object.keys(scoresByUserId).sort(
+    (a, b) => scoresByUserId[b] - scoresByUserId[a]
+  );
 
   function onClickReturn() {
     socket.emit("returnToLobby");
   }
 
-  const scoreboard = players
-    .map(({ id, name, avatarUri }) => ({
-      id,
-      name,
-      avatarUri,
-      score: playerScores[id],
-    }))
-    .sort((a, b) => b.score - a.score);
-
   return (
     <div className={styles.scoreboard}>
       <div className={styles.medalists}>
-        {scoreboard.slice(0, 3).map(({ id, name, avatarUri, score }, i) => (
+        {scoreOrderedUserIds.slice(0, 3).map((id, i) => (
           <Medalist
             key={id}
             place={i + 1}
-            name={name}
-            avatarUri={avatarUri}
-            score={score}
+            name={usersById[id].name}
+            avatarUri={usersById[id].avatarUri}
+            score={scoresByUserId[id]}
           />
         ))}
       </div>
-      {scoreboard.length > 3 && (
+      {scoreOrderedUserIds.length > 3 && (
         <div className={styles.losers}>
-          {scoreboard.slice(3).map(({ id, name, score }, i) => (
+          {scoreOrderedUserIds.slice(3).map((id, i) => (
             <div key={id} className={styles.loser}>
               <span className={styles.place}>{i + 4}</span>
-              <span className={styles.name}>{name}</span>
-              <span>{score} pts</span>
+              <span className={styles.name}>{usersById[id].name}</span>
+              <span>{scoresByUserId[id]} pts</span>
             </div>
           ))}
         </div>

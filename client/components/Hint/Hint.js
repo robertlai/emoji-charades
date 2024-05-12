@@ -8,7 +8,7 @@ export default function Hint() {
   const { gameState } = useContext(SocketContext);
   return (
     <div className={styles.hint}>
-      {gameState.hint.map((cp) => (
+      {gameState.current.hint.map((cp) => (
         <Emoji key={cp} codePoint={cp} />
       ))}
     </div>

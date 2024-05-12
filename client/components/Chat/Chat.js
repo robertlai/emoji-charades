@@ -8,24 +8,20 @@ import styles from "./Chat.module.scss";
 export default function Chat() {
   const inputRef = useRef(null);
   const { user } = useContext(AuthenticatedContext);
-  const { gameState, messages } = useContext(SocketContext);
+  const { roomState, messages } = useContext(SocketContext);
+  const { flow, usersById } = roomState;
 
   function onSubmit(e) {
     e.preventDefault();
     if (!inputRef.current?.value?.trim() || isHinter) return;
-    socket.emit("guess", { guess: inputRef.current.value.trim() });
+    socket.emit("message", { message: inputRef.current.value.trim() });
     inputRef.current.value = "";
   }
 
-  const usersById = gameState.players.reduce(
-    (acc, cur) => ({ ...acc, [cur.id]: cur }),
-    {}
-  );
-
   let isHinter = false;
   let placeholder = "Type a message...";
-  if (gameState.flow == "playing") {
-    isHinter = gameState.players[gameState.turn].id == user.id;
+  if (flow == "playing") {
+    // isHinter = roomState.players[roomState.turn].id == user.id;
     if (isHinter) {
       placeholder = "Type your guess...";
     }
