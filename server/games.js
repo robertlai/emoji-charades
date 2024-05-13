@@ -33,6 +33,7 @@ function nextTurn(channelId) {
 
     // End game after last turn
     if (games[channelId].turn >= games[channelId].turnUserIds.length) {
+      broadcastGameState(channelId);
       transitionRoom(channelId, "scoreboard");
       return;
     }

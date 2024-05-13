@@ -8,7 +8,7 @@ import styles from "./Chat.module.scss";
 export default function Chat() {
   const inputRef = useRef(null);
   const { user } = useContext(AuthenticatedContext);
-  const { roomState, messages } = useContext(SocketContext);
+  const { roomState, gameState, messages } = useContext(SocketContext);
   const { flow, usersById } = roomState;
 
   function onSubmit(e) {
@@ -20,18 +20,16 @@ export default function Chat() {
 
   let isHinter = false;
   let placeholder = "Type a message...";
-  if (flow == "playing") {
-    // isHinter = roomState.players[roomState.turn].id == user.id;
-    if (isHinter) {
-      placeholder = "Type your guess...";
-    }
+  if (flow == "game" && gameState) {
+    isHinter = gameState.current.hinter === user.id;
+    placeholder = "Type your guess...";
   }
 
   return (
     <div className={styles.chat}>
       <div className={styles.messages}>
         {messages.map(({ from, text, ts }) => (
-          <div className={styles.message} key={`${from}_${ts}`}>
+          <div className={styles.message} key={`${from}_${text}_${ts}`}>
             {usersById[from] && (
               <div className={styles.user}>
                 <img src={usersById[from].avatarUri} />
